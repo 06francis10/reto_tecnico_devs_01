@@ -1,10 +1,14 @@
 import express from "express"
 import auth from "./routes/auth"
+import connect from "./config/db"
+require('dotenv').config()
+
 const app=express()
 
+connect()
 // Habilitar express.json
 app.use(express.json())
-const PORT=3000;
+const PORT=process.env.PORT;
 
 app.use("/api/",auth)
 

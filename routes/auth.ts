@@ -1,18 +1,12 @@
 import express from "express"
-
+import authController from "../controllers/authController"
 const router=express.Router()
 
 // /api/login
-router.post("/login",(req,res)=>{
-    res.send(req.body)
-})
+router.post("/login",authController.login)
 // /api/register
-router.get("/register",(req,res)=>{
-    res.send(req.body)
-})
+router.get("/register",authController.register)
 // /api/logout
-router.get("/logout",(req,res)=>{
-    res.send(req.body)
-})
+router.get("/logout",authController.logout)
 
 export default router;
