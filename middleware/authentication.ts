@@ -1,9 +1,10 @@
 import { NextFunction, Response } from "express"
 import { CustomRequest } from "../interfaces/CustomRequest"
 import {verify} from "jsonwebtoken"
+import User from "../models/User"
 require('dotenv').config()
 
-const authentication=(req:CustomRequest,res:Response,next:NextFunction)=>{
+const authentication=async(req:CustomRequest,res:Response,next:NextFunction)=>{
     // Leer el Token del header
     const token=req.header("x-auth-token")
 
@@ -18,7 +19,9 @@ const authentication=(req:CustomRequest,res:Response,next:NextFunction)=>{
         const cifrado=verify(token,`${process.env.SECRET_KEY}`)
         // Verificar que 'cifrado' es de tipo JwtPayload y tiene la propiedad 'user'
         if (typeof cifrado !== 'string' && cifrado.user) {
-            req.user = cifrado.user;
+            const user=await User.findById(cifrado.user.id)
+            // req.user = cifrado.user;
+            req.user = user;
         }
         next();
     } catch (error) {
