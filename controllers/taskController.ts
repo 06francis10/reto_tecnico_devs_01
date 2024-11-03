@@ -1,8 +1,8 @@
 import { Response } from "express"
 import { CustomRequest } from "../interfaces/CustomRequest"
 import { validationResult } from "express-validator";
-// import User from "../models/User";
 import Task from "../models/Task";
+import User from "../models/User";
 
 const create = async (req: CustomRequest, res: Response) => {
     const errors = validationResult(req);
@@ -15,8 +15,14 @@ const create = async (req: CustomRequest, res: Response) => {
             res.status(403).json({ msg: "No tiene permiso para realizar la accion" })
             return
         }
+        const user=await User.findById(req.body.id)
+        if(!user){
+            res.status(404).json({msg:"El usuario no existe"})
+            return
+        }
+        // res.json(user)
         const task = new Task(req.body);
-        task.assignedTo = req.user.id;
+        task.assignedTo = req.body.id;
         task.save()
         res.status(200).json({
             msg: "Tarea Creada Correctamente",
@@ -31,17 +37,46 @@ const create = async (req: CustomRequest, res: Response) => {
 const getTaks = async (req: CustomRequest, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        res.status(400).send({ errores: errors.array() })
+        res.status(400).send({ errores: errors.array() });
         return;
     }
+
     try {
-        const tasks = await Task.find()
-        res.send(tasks)
+        // Obtener los parámetros de query
+        const { status, assignedTo } = req.query;
+
+        // Si es admin, permitir ver todas las tareas con filtrado opcional
+        if (req.user.role === "admin") {
+            const filter: any = {};
+
+            if (status) {
+                filter.status = status; // Filtra por `status` si se proporciona
+            }
+
+            if (assignedTo) {
+                filter.assignedTo = assignedTo; // Filtra por `assignedTo` si se proporciona
+            }
+
+            const tasks = await Task.find(filter);
+            res.send(tasks);
+            return;
+        } else {
+            // Filtrar solo las tareas asignadas al usuario que hace la solicitud
+            const filter: any = { assignedTo: req.user.id };
+
+            if (status) {
+                filter.status = status; // Filtra por `status` si se proporciona
+            }
+
+            const tasks = await Task.find(filter);
+            res.send(tasks);
+            return;
+        }
     } catch (error) {
-        console.log(error)
-        res.status(400).send("Hubo un error")
+        console.error(error);
+        res.status(400).send("Hubo un error");
     }
-}
+};
 
 const update = async (req: CustomRequest, res: Response) => {
 
@@ -64,6 +99,7 @@ const update = async (req: CustomRequest, res: Response) => {
             res.status(403).json({ msg: "La tarea no le pertenece" })
             return
         }
+        // res.json(task)
         // Actualizado el estado de la tarea
         task.status = req.body.status;
         task.save()

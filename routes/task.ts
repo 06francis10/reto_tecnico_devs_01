@@ -13,26 +13,39 @@ router.get("/",
 router.post("/",
     authentication,
     [
-        check("title","El titulo el obligatorio").not().isEmpty(),
-        check("description","La descripcion el obligatorio").not().isEmpty(),
-        check("status","el estado debe se Pendiente | En Progreso | Completa").isIn(['Pendiente','En Progreso','Completa']),
-        check("dueDate","El campo debe ser una fecha").isDate(),
+        check("title", "El título es obligatorio y debe tener entre 3 y 50 caracteres")
+            .isLength({ min: 3, max: 50 }),
+        check("description", "La descripción es obligatoria y debe tener entre 5 y 100 caracteres")
+            .isLength({ min: 5, max: 100 }),
+        check("status", "El estado debe ser Pendiente | En Progreso | Completa")
+            .isIn(['Pendiente', 'En Progreso', 'Completa']),
+        check("dueDate", "El campo debe ser una fecha válida")
+            .isDate(),
+        check("id", "El id del usuario no es válido")
+            .isLength({ min: 24, max: 24 }).isHexadecimal(),
     ],
-    taskController.create)
+    taskController.create
+);
+
 
 // api/tasks/{id} (actualizar tarea)
 router.put("/:id",
     authentication,
     [
-        check("id","EL id del proyecto no es valido").isLength({min:24}),
-        check("status","El estado debe ser Pendiente | En Progreso | Completa").isIn(['Pendiente','En Progreso','Completa']),
+        check("id", "El id del proyecto no es válido")
+            .isLength({ min: 24, max: 24 })
+            .isHexadecimal(),
+        check("status","El estado debe ser Pendiente | En Progreso | Completa")
+            .isIn(['Pendiente','En Progreso','Completa']),
     ],
     taskController.update)
 // api/tasks/{id} (eliminar tarea)
 router.delete("/:id",
     authentication,
     [
-        check("id","EL id del proyecto no es valido").isLength({min:24}),
+        check("id", "El id del proyecto no es válido")
+            .isLength({ min: 24, max: 24 })
+            .isHexadecimal(),
     ],
     taskController.destroy)
 
