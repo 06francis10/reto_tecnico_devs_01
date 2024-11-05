@@ -120,9 +120,6 @@
 
 ## Seguridad
 - Se utiliza autenticación mediante JWT. El token debe incluirse en el header de las solicitudes protegidas:
-  ```
-  Authorization: Bearer <TOKEN>
-  ```
 
 ## Manejo de Errores
 La API devuelve respuestas JSON con códigos de estado HTTP adecuados (400, 401, 403, 404) y un mensaje que describe el error.
