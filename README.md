@@ -1,8 +1,5 @@
 # Sistema de Gestión de Tareas de Equipo
 
-## Descripción del Proyecto
-El proyecto es una API REST para la gestión de tareas, creada con Node.js, Express y TypeScript, usando MongoDB como base de datos. Esta API permite a los usuarios, según sus roles (Admin o Usuario), realizar acciones como crear, asignar y gestionar tareas. Se implementa autenticación y autorización mediante JWT para garantizar la seguridad y la privacidad de los datos.
-
 ## Requisitos
 - Node.js y npm instalados.
 - MongoDB como base de datos.
